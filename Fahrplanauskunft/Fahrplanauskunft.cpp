@@ -19,13 +19,11 @@ Station* Dijkstra(Station* StartStation, Station* GoalStation);
 void printPath(Station* EndStation);
 void buildGraphFromFile(string Filename);
 
-unordered_map <string, Station*> Stations;
+unordered_map <string, Station*> Stations; //Hashmap, die alle Stationen enthält :D
 int minweg;
 
 int main()
 {
-    //Hashmap die später alle Stationen halten soll:
-	//Stations = new unordered_map <string, Station*>;
 	minweg = 0;
 
 	//Einlesen der Datei:
@@ -58,7 +56,7 @@ bool FindShortestPath(string Start, string Goal) {
 		Station* temp = Dijkstra(StartStation, GoalStation);
 		if (temp == StartStation) {
 			//Ziel wurde gefunden und es war verbunden mit dem Start, gib die Strecke aus:
-			cout << "Kuerzester Weg: " << minweg << endl;
+			cout << "Kuerzester Weg: " << minweg << " Minuten :D" << endl;
 			printPath(StartStation);
 			return true;
 		}
@@ -82,34 +80,36 @@ Station* getStation(string Name) {
 Station* Dijkstra(Station* StartStation, Station* GoalStation) {
 	int minDist = 0;
 	//Die Suche geht von Ziel zu start um am Schluss die Vorgänger in richtiger Reihenfolge ausgeben zu können :D
-
+	HeapItem * current = nullptr;
+	HeapItem * last = nullptr;
 	StationHeap* Heap = new StationHeap();
 	do {
 		GoalStation->Visited = true; // Knoten als besucht markieren
-
-		//Alle Verbindungen des Knotens in den Heap einfügen, die noch nicht besucht wurden
+		//Alle Verbindungen des aktuellen Knotens in den Heap einfügen, die noch nicht besucht wurden
 		int i = 0;
 		Connection* temp = GoalStation->getConnection(i);
 		while (temp != nullptr) {
 			temp = GoalStation->getConnection(i);
 			if (!temp->Next->Visited) {
+
 				//TODO: auf Umstiege überprüfen!!!! und mindist dementsprechend ändern :D
-				Heap->insertStationSorted(temp->Next, temp->Distance + minDist);
+
+				Heap->insertStationSorted(temp->Next, temp->Distance + minDist, GoalStation);
 			}
 			i++;
 			temp = GoalStation->getConnection(i);
 		}
-		Station* temp2 = GoalStation;
+		//Station* temp2 = GoalStation;
 		do {
 			// Knoten mit minimalem Gewicht aus Heap entfernen, minweg aktualisieren und predecessor aktualisieren
-			HeapItem* temp = Heap->getNextStation();
-			temp->Item->predecessor = temp2; //evtl wo anders hinschreiben? oO -> vorher = Goalstation
-			GoalStation = temp->Item; 
-			minDist = temp->weightedValue;
+			HeapItem* temph = Heap->getNextStation();
+			temph->Item->predecessor = temph->predecessor; 
+			GoalStation = temph->Item; 
+			minDist = temph->weightedValue;
 		} while (GoalStation->Visited);
 		//cout << GoalStation->Name << " " << GoalStation->predecessor->Name << endl;
 
-	} while (GoalStation != StartStation && !Heap->isEmpty()); // Solange Zielknoten nicht erreicht
+	} while (GoalStation != StartStation ); // Solange Zielknoten nicht erreicht
 	minweg = minDist;
 	return StartStation;
 }
@@ -122,6 +122,7 @@ void printPath(Station* EndStation) {
 		cout << temp->Name << " - ";
 		temp = temp->predecessor;
 	}
+	cout << temp->Name;
 }
 
 void buildGraphFromFile(string Filename) {
@@ -141,9 +142,10 @@ void buildGraphFromFile(string Filename) {
 		while (!ss.eof()) {
 			getline(ss, temp, '"'); //in temp steht nun der Name der Station			
 
-			if (getStation(temp) == nullptr) { //Station noch nicht vorhanden neue Station erzeugen
+			if (getStation(temp) == nullptr) { //Station noch nicht vorhanden neue Station erzeugen und speichern
 				actual = new Station(temp);
 				Stations[temp] = actual;
+				//cout << actual->Name;
 			}
 			actual = Stations[temp];
 			actual->addConnectionBiDirectional(last, connLine, tempDist);
@@ -152,5 +154,6 @@ void buildGraphFromFile(string Filename) {
 			last = actual;
 			getline(ss, temp, '"'); //gehe zum nächsten ' " ' -> also zur nächsten Station (bzw zum eof falls keine Station mehr vorhanden?).
 		}
+		last = nullptr; // Die Linien sollten nicht verbunden werden
 	}
 }
