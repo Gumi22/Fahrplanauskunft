@@ -15,14 +15,15 @@ struct Connection {
 class Station
 {
 public:
-	Station();
+	Station(std::string name);
 	virtual ~Station();
 	void addConnection(Station*, std::string, int);
 	void addConnectionBiDirectional(Station*, std::string, int);
 	Connection* getConnection(int Num); //Gibt den Pointer der angeforderten connection zurück, nullptr wenn nicht vorhanden
-	std::string Name;
-	bool Visited;
-	Station* predecessor;
+
+	std::string Name; //Name der Station
+	bool Visited; //Indikator ob Station bei der Suche schon angeschaut wurde
+	Station* predecessor; //Vorgänger der Station beim Dijkstra
 
 private:
 	std::vector<Connection*>* Connections;

@@ -2,11 +2,12 @@
 #include "Station.h"
 
 
-Station::Station()
+Station::Station(std::string name)
 {
 	Connections = new std::vector<Connection*>;
 	Visited = false;
 	predecessor = nullptr;
+	Name = name;
 }
 
 
@@ -34,7 +35,9 @@ void Station::addConnection(Station* other, std::string line, int distance) {
 
 void Station::addConnectionBiDirectional(Station* other, std::string line, int distance) {
 	addConnection(other, line, distance);
-	other->addConnection(this, line, distance);
+	if (other != nullptr) {
+		other->addConnection(&*this, line, distance);
+	}
 }
 
 Connection* Station::getConnection(int Num) {

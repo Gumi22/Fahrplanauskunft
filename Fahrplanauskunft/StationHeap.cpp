@@ -54,5 +54,8 @@ HeapItem* StationHeap::getNextStation() {
 }
 
 bool StationHeap::isEmpty() {
-	(root == nullptr) ? true : false;
+	if (root == nullptr) {
+		return true;
+	}
+	return false;
 }

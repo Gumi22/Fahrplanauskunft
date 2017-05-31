@@ -19,13 +19,13 @@ Station* Dijkstra(Station* StartStation, Station* GoalStation);
 void printPath(Station* EndStation);
 void buildGraphFromFile(string Filename);
 
-unordered_map <string, Station*>* Stations;
+unordered_map <string, Station*> Stations;
 int minweg;
 
 int main()
 {
     //Hashmap die später alle Stationen halten soll:
-	Stations = new unordered_map <string, Station*>;
+	//Stations = new unordered_map <string, Station*>;
 	minweg = 0;
 
 	//Einlesen der Datei:
@@ -37,11 +37,14 @@ int main()
 	buildGraphFromFile(Filename);
 	
 	//Fragen nach demm Start und Ziel
+	cout << "Start Ziel eingeben: " << endl;
 	string Start, Goal;
 	cin >> Start >> Goal;
 	if (!FindShortestPath(Start, Goal)) {
 		cout << "Es wurde keine Verbindung gefunden";
 	}
+
+	cin >> Start;
 	return 0;
 }
 
@@ -51,10 +54,12 @@ bool FindShortestPath(string Start, string Goal) {
 	Station* GoalStation = getStation(Goal);
 	if (StartStation != nullptr && GoalStation != nullptr) {
 		//Dijkstra:
+		cout << "Start und Ziel gefunden, beginne Berechnung: " << endl;
 		Station* temp = Dijkstra(StartStation, GoalStation);
-		if (temp == GoalStation) {
+		if (temp == StartStation) {
 			//Ziel wurde gefunden und es war verbunden mit dem Start, gib die Strecke aus:
-			printPath(temp);
+			cout << "Kuerzester Weg: " << minweg << endl;
+			printPath(StartStation);
 			return true;
 		}
 	}
@@ -65,7 +70,7 @@ bool FindShortestPath(string Start, string Goal) {
 Station* getStation(string Name) {
 	//So fängt man ab ob es schon existiert, oder nicht:
 	try {
-		Station* test = Stations->at("test");
+		Station* test = Stations.at(Name);
 		return test;
 	}
 	catch (exception& e) {
@@ -84,36 +89,39 @@ Station* Dijkstra(Station* StartStation, Station* GoalStation) {
 
 		//Alle Verbindungen des Knotens in den Heap einfügen, die noch nicht besucht wurden
 		int i = 0;
-		Connection* temp = GoalStation->getConnection[i];
+		Connection* temp = GoalStation->getConnection(i);
 		while (temp != nullptr) {
+			temp = GoalStation->getConnection(i);
 			if (!temp->Next->Visited) {
 				//TODO: auf Umstiege überprüfen!!!! und mindist dementsprechend ändern :D
 				Heap->insertStationSorted(temp->Next, temp->Distance + minDist);
 			}
 			i++;
+			temp = GoalStation->getConnection(i);
 		}
-
+		Station* temp2 = GoalStation;
 		do {
-			// Knoten mit minimalem Gewicht aus Heap entfernen, minweg aktualisieren
+			// Knoten mit minimalem Gewicht aus Heap entfernen, minweg aktualisieren und predecessor aktualisieren
 			HeapItem* temp = Heap->getNextStation();
-			GoalStation = temp->Item;
+			temp->Item->predecessor = temp2; //evtl wo anders hinschreiben? oO -> vorher = Goalstation
+			GoalStation = temp->Item; 
 			minDist = temp->weightedValue;
 		} while (GoalStation->Visited);
+		//cout << GoalStation->Name << " " << GoalStation->predecessor->Name << endl;
 
 	} while (GoalStation != StartStation && !Heap->isEmpty()); // Solange Zielknoten nicht erreicht
 	minweg = minDist;
-	StartStation->predecessor = GoalStation;
 	return StartStation;
 }
 
 //Gibt die Vorgänger der Stationen aus...muss noch umgedreht und überarbeitet werden (derzeit von hinten nach vorne und ohne Gesamtzeit)
 //...gelöst durch von Hinten nach Vorne durchschauen des Ziels im Dijkstra
 void printPath(Station* EndStation) {
-
-	do{
-		cout << EndStation->Name << " - ";
-	} while (EndStation->predecessor != nullptr);
-	cout << "135 min";
+	Station* temp = EndStation;
+	while (temp != nullptr && temp->predecessor != nullptr && temp->Name != temp->predecessor->Name) {
+		cout << temp->Name << " - ";
+		temp = temp->predecessor;
+	}
 }
 
 void buildGraphFromFile(string Filename) {
@@ -122,23 +130,27 @@ void buildGraphFromFile(string Filename) {
 	string connLine = ""; //Wird für den Namen der Verbindung benutzt
 	string temp = ""; //Wird benutzt um die Stationsnamen einzulesen
 	int tempDist = 0; //Wird benutzt um die Entfernungen zwischenzuspeichern
+	Station* actual = nullptr;
+	Station* last = nullptr;
+
 	while (getline(infile, line)) { //Jede Zeile bearbeiten
 		stringstream ss(line); 
 		getline(ss, connLine, ':'); //in connLine steht nun der Name der Ubahnlinie
 		getline(ss, temp, '"'); //Gehe zur ersten Station
-		while (!ss.eof) {
-			getline(ss, temp, '"'); //in temp steht nun der Name der Station
 
-			//TODO: Fertig schreiben !!!!!!!
+		while (!ss.eof()) {
+			getline(ss, temp, '"'); //in temp steht nun der Name der Station			
 
-			if (getStation(temp) == nullptr) { //Station noch nicht vorhanden neue Station erzeigen
-
+			if (getStation(temp) == nullptr) { //Station noch nicht vorhanden neue Station erzeugen
+				actual = new Station(temp);
+				Stations[temp] = actual;
 			}
-			else {
+			actual = Stations[temp];
+			actual->addConnectionBiDirectional(last, connLine, tempDist);
 
-			}
-
-			getline(ss, temp, '"'); //gehe zum nächsten " -> also zur nächsten Station
+			ss >> tempDist; //in tempDist steht nun die Distanz zur nächsten Station
+			last = actual;
+			getline(ss, temp, '"'); //gehe zum nächsten ' " ' -> also zur nächsten Station (bzw zum eof falls keine Station mehr vorhanden?).
 		}
 	}
 }
