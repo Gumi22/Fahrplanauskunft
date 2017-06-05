@@ -28,10 +28,52 @@ int main()
 
 	//Einlesen der Datei:
 	string Filename;
-	cout << "Dateiname: ";
-	cin >> Filename;
+	int des = 0;
 
-	//Erstellen des Graphen:
+	do {
+		std::cout << std::endl;
+		std::cout << "-----------------------------------------------------------------" << std::endl;
+		std::cout << "[1] Enter File to import" << std::endl;
+		std::cout << "[2] Enter Starting point end Goal to calculate shortest distance" << std::endl;
+		std::cout << "[3] QUIT!" << std::endl;
+		std::cout << "-----------------------------------------------------------------" << std::endl;
+		std::cin >> des;
+
+		switch (des)
+		{
+			case(1):
+			{
+				std::cout << "Please enter Filename you want to import: " << std::endl;
+				std::cin >> Filename;
+				buildGraphFromFile(Filename);
+				break;
+			}
+			case(2):
+			{
+				std::string Start, Goal;
+				std::cout << "Please Enter Start and Goal of your journey: " << std::endl;
+				std::cin >> Start >> Goal;
+				std::cout << std::endl;
+
+				if (!FindShortestPath(Start, Goal))
+				{
+					std::cout << "Sorry this connection does'nt exist!" << std::endl;
+				}
+
+				break;
+			}
+			case(3):
+			{
+				break;
+			}
+		}
+
+	} while (des != 3);
+
+
+
+
+	/*//Erstellen des Graphen:
 	buildGraphFromFile(Filename);
 	
 	//Fragen nach demm Start und Ziel
@@ -43,7 +85,7 @@ int main()
 	}
 
 	cin >> Start;
-	return 0;
+	return 0;*/
 }
 
 //Findet den kürzesten Weg vom Start zum Ziel und gibt zurück ob die Suche erfolgreich war.
@@ -93,7 +135,8 @@ Station* Dijkstra(Station* StartStation, Station* GoalStation) {
 			temp = GoalStation->getConnection(i);
 			if (!temp->Next->Visited) {
 
-				//TODO: auf Umstiege überprüfen!!!! und mindist dementsprechend ändern :D
+				///TODO: umstiege prüfen und mindis +5 
+				///if(jetziger knoten - Line != Nächster Knoten - Line)
 
 				Heap->insertStationSorted(temp->Next, temp->Distance + minDist, GoalStation);
 				int d = Heap->getCount();
@@ -111,10 +154,12 @@ Station* Dijkstra(Station* StartStation, Station* GoalStation) {
 			temph->Item->predecessor = temph->predecessor; 
 			GoalStation = temph->Item; 
 			minDist = temph->weightedValue;
+
 		} while (GoalStation->Visited);
 		//cout << GoalStation->Name << " " << GoalStation->predecessor->Name << endl;
 
 	} while (GoalStation != StartStation ); // Solange Zielknoten nicht erreicht
+
 	minweg = minDist;
 	cout << "Maximale Heapgröße" << maxCount << endl;
 	return StartStation;
