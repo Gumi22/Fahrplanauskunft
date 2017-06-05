@@ -79,6 +79,7 @@ Station* getStation(string Name) {
 //Wendet den Dijkstra-Algorythmus an und gibt dann das Ziel zurück, indem der Vorgängerknoten steht.
 Station* Dijkstra(Station* StartStation, Station* GoalStation) {
 	int minDist = 0;
+	int maxCount = 0;
 	//Die Suche geht von Ziel zu start um am Schluss die Vorgänger in richtiger Reihenfolge ausgeben zu können :D
 	HeapItem * current = nullptr;
 	HeapItem * last = nullptr;
@@ -95,6 +96,10 @@ Station* Dijkstra(Station* StartStation, Station* GoalStation) {
 				//TODO: auf Umstiege überprüfen!!!! und mindist dementsprechend ändern :D
 
 				Heap->insertStationSorted(temp->Next, temp->Distance + minDist, GoalStation);
+				int d = Heap->getCount();
+				if (d > maxCount) {
+					maxCount = d;
+				}
 			}
 			i++;
 			temp = GoalStation->getConnection(i);
@@ -111,6 +116,7 @@ Station* Dijkstra(Station* StartStation, Station* GoalStation) {
 
 	} while (GoalStation != StartStation ); // Solange Zielknoten nicht erreicht
 	minweg = minDist;
+	cout << "Maximale Heapgröße" << maxCount << endl;
 	return StartStation;
 }
 

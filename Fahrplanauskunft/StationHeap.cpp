@@ -4,6 +4,7 @@
 
 StationHeap::StationHeap()
 {
+	Count = 0;
 }
 
 
@@ -18,7 +19,7 @@ StationHeap::~StationHeap()
 }
 
 void StationHeap::insertStationSorted(Station* newStation, int weightedValue, Station* previous) {
-	
+	Count++;
 	if (root != nullptr) { //wenn schon etwas eingefügt wurde
 		HeapItem* temp = root;
 		while (temp->next != nullptr && weightedValue > temp->next->weightedValue) { //solange weitersuchen bis der nächste Wert <= meinem neuen Wert ist oder nicht vorhanden ist
@@ -51,6 +52,7 @@ void StationHeap::insertStationSorted(Station* newStation, int weightedValue, St
 }
 
 HeapItem* StationHeap::getNextStation() {
+	Count--;
 	HeapItem* temp = root;
 	root = root->next;
 	return temp;
@@ -61,4 +63,8 @@ bool StationHeap::isEmpty() {
 		return true;
 	}
 	return false;
+}
+
+int StationHeap::getCount() {
+	return Count;
 }

@@ -17,7 +17,9 @@ public:
 	void insertStationSorted(Station* newStation, int weightedValue, Station* previous);
 	HeapItem* getNextStation();
 	bool isEmpty();
+	int getCount();
 private:
 	HeapItem* root;
+	int Count;
 };
 
