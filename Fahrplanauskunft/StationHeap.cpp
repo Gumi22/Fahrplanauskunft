@@ -18,7 +18,7 @@ StationHeap::~StationHeap()
 	}
 }
 
-void StationHeap::insertStationSorted(Station* newStation, int weightedValue, Station* previous) {
+void StationHeap::insertStationSorted(Station* newStation, int weightedValue, Station* previous, std::string line) {
 	Count++;
 	if (root != nullptr) { //wenn schon etwas eingefügt wurde
 		HeapItem* temp = root;
@@ -31,6 +31,7 @@ void StationHeap::insertStationSorted(Station* newStation, int weightedValue, St
 			temp->next->Item = newStation;
 			temp->next->weightedValue = weightedValue;
 			temp->next->predecessor = previous;
+			temp->next->line = line;
 			temp->next->next = nullptr;
 		}
 		else {
@@ -39,6 +40,7 @@ void StationHeap::insertStationSorted(Station* newStation, int weightedValue, St
 			temp->next->Item = newStation;
 			temp->next->weightedValue = weightedValue;
 			temp->next->predecessor = previous;
+			temp->next->line = line;
 			temp->next->next = temp2; //zwischengespeicherten Wert dranhängen
 		}
 	}
@@ -47,11 +49,15 @@ void StationHeap::insertStationSorted(Station* newStation, int weightedValue, St
 		root->Item = newStation;
 		root->weightedValue = weightedValue;
 		root->predecessor = previous;
+		root->line = line;
 		root->next = nullptr;
 	}
 }
 
 HeapItem* StationHeap::getNextStation() {
+	if (root == nullptr) {
+		return nullptr;
+	}
 	Count--;
 	HeapItem* temp = root;
 	root = root->next;

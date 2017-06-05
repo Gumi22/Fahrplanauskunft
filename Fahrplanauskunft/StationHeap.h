@@ -6,7 +6,7 @@ struct HeapItem {
 	HeapItem* next;
 	int weightedValue;
 	Station* predecessor; //wird benutzt um nach hinten zu referenzieren :D 
-	//TODO - umstiege mithilfe dieses Items erkennen????
+	std::string line;
 };
 
 class StationHeap
@@ -14,7 +14,7 @@ class StationHeap
 public:
 	StationHeap();
 	virtual ~StationHeap();
-	void insertStationSorted(Station* newStation, int weightedValue, Station* previous);
+	void insertStationSorted(Station* newStation, int weightedValue, Station* previous, std::string line);
 	HeapItem* getNextStation();
 	bool isEmpty();
 	int getCount();
