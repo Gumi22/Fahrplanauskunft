@@ -48,8 +48,12 @@ int main()
 		case(2):
 		{
 			std::string Start, Goal;
+			Start = "";
+			Goal = "";
 			std::cout << "Please Enter Start and Goal of your journey: " << std::endl;
-			std::cin >> Start >> Goal;
+			getline(cin, Start); //delete buffer... must be somehow made better, this sucks
+			getline(cin, Start);
+			getline(cin, Goal);
 			std::cout << std::endl;
 
 			if (!FindShortestPath(Start, Goal))
