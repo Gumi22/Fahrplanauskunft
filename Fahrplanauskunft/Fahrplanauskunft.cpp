@@ -18,6 +18,7 @@ Station* getStation(string Name);
 Station* Dijkstra(Station* StartStation, Station* GoalStation);
 void printPath(Station* EndStation);
 void buildGraphFromFile(string Filename);
+int call_menue();
 
 unordered_map <string, Station*> Stations; //Hashmap, die alle Stationen enthält :D
 int minweg;
@@ -31,62 +32,60 @@ int main()
 	int des = 0;
 
 	do {
-		std::cout << std::endl;
-		std::cout << "-----------------------------------------------------------------" << std::endl;
-		std::cout << "[1] Enter File to import" << std::endl;
-		std::cout << "[2] Enter Starting point end Goal to calculate shortest distance" << std::endl;
-		std::cout << "[3] QUIT!" << std::endl;
-		std::cout << "-----------------------------------------------------------------" << std::endl;
-		std::cin >> des;
+
+		des = call_menue();
+
 
 		switch (des)
 		{
-			case(1):
-			{
-				std::cout << "Please enter Filename you want to import: " << std::endl;
-				std::cin >> Filename;
-				buildGraphFromFile(Filename);
-				break;
-			}
-			case(2):
-			{
-				std::string Start, Goal;
-				std::cout << "Please Enter Start and Goal of your journey: " << std::endl;
-				std::cin >> Start >> Goal;
-				std::cout << std::endl;
+		case(1):
+		{
+			std::cout << "Please enter Filename you want to import: " << std::endl;
+			std::cin >> Filename;
+			buildGraphFromFile(Filename);
+			break;
+		}
+		case(2):
+		{
+			std::string Start, Goal;
+			std::cout << "Please Enter Start and Goal of your journey: " << std::endl;
+			std::cin >> Start >> Goal;
+			std::cout << std::endl;
 
-				if (!FindShortestPath(Start, Goal))
-				{
-					std::cout << "Sorry this connection does'nt exist!" << std::endl;
-				}
-
-				break;
-			}
-			case(3):
+			if (!FindShortestPath(Start, Goal))
 			{
+				std::cout << "Sorry this connection does'nt exist!" << std::endl;
 				break;
 			}
+
+			break;
+		}
+		case(3):
+		{
+			break;
+		}
 		}
 
-	} while (des != 3);
+		} while (des != 3);
 
 
 
 
-	/*//Erstellen des Graphen:
-	buildGraphFromFile(Filename);
-	
-	//Fragen nach demm Start und Ziel
-	cout << "Start Ziel eingeben: " << endl;
-	string Start, Goal;
-	cin >> Start >> Goal;
-	if (!FindShortestPath(Start, Goal)) {
-		cout << "Es wurde keine Verbindung gefunden";
+		/*//Erstellen des Graphen:
+		buildGraphFromFile(Filename);
+
+		//Fragen nach demm Start und Ziel
+		cout << "Start Ziel eingeben: " << endl;
+		string Start, Goal;
+		cin >> Start >> Goal;
+		if (!FindShortestPath(Start, Goal)) {
+			cout << "Es wurde keine Verbindung gefunden";
+		}
+
+		cin >> Start;
+		return 0;*/
 	}
 
-	cin >> Start;
-	return 0;*/
-}
 
 //Findet den kürzesten Weg vom Start zum Ziel und gibt zurück ob die Suche erfolgreich war.
 bool FindShortestPath(string Start, string Goal) {
@@ -191,7 +190,8 @@ void buildGraphFromFile(string Filename) {
 		getline(ss, temp, '"'); //Gehe zur ersten Station
 
 		while (!ss.eof()) {
-			getline(ss, temp, '"'); //in temp steht nun der Name der Station			
+			getline(ss, temp, '"'); //in temp steht nun der Name der Station	
+			std::cout << temp << std::endl;
 
 			if (getStation(temp) == nullptr) { //Station noch nicht vorhanden neue Station erzeugen und speichern
 				actual = new Station(temp);
@@ -207,4 +207,21 @@ void buildGraphFromFile(string Filename) {
 		}
 		last = nullptr; // Die Linien sollten nicht verbunden werden
 	}
+}
+
+int call_menue()
+{
+	int a = 0;
+
+	std::cout << std::endl;
+	std::cout << "-----------------------------------------------------------------" << std::endl;
+	std::cout << "[1] Enter File to import" << std::endl;
+	std::cout << "[2] Enter Starting point end Goal to calculate shortest distance" << std::endl;
+	std::cout << "[3] QUIT!" << std::endl;
+	std::cout << "-----------------------------------------------------------------" << std::endl;
+	std::cout << std::endl;
+	std::cin >> a;
+	std::cout << std::endl;
+	
+	return a;
 }
