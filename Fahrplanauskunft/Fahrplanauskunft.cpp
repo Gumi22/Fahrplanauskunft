@@ -47,13 +47,19 @@ int main()
 		}
 		case(2):
 		{
-			std::string Start, Goal;
-			Start = "";
-			Goal = "";
+			std::string Start = "";
+			std::string Goal = "";
+
 			std::cout << "Please Enter Start and Goal of your journey: " << std::endl;
-			getline(cin, Start); //delete buffer... must be somehow made better, this sucks
+			cin.clear();
+
+			getline(cin, Start);
 			getline(cin, Start);
 			getline(cin, Goal);
+
+			std::cout << Start << std::endl;
+			std::cout << Goal << std::endl;
+
 			std::cout << std::endl;
 
 			if (!FindShortestPath(Start, Goal))
@@ -139,7 +145,7 @@ Station* Dijkstra(Station* StartStation, Station* GoalStation) {
 			if (!temp->Next->Visited) {
 
 				///TODO: umstiege prüfen und mindis +5 
-				///if(jetziger knoten - Line != Nächster Knoten - Line)
+				
 
 				Heap->insertStationSorted(temp->Next, temp->Distance + minDist, GoalStation);
 				int d = Heap->getCount();
