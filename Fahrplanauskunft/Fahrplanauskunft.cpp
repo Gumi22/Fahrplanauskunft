@@ -104,7 +104,8 @@ bool FindShortestPath(string Start, string Goal) {
 		Station* temp = Dijkstra(StartStation, GoalStation);
 		if (temp == StartStation) {
 			//Ziel wurde gefunden und es war verbunden mit dem Start, gib die Strecke aus:
-			cout << "Kuerzester Weg: " << minweg << " Minuten :D" << endl;
+			cout << "Kuerzester Weg: " << minweg << " Minuten" << endl;
+			std::cout << std::endl;
 			printPath(StartStation);
 			return true;
 		}
@@ -145,6 +146,7 @@ Station* Dijkstra(Station* StartStation, Station* GoalStation) {
 				///TODO: umstiege prüfen und mindis +5 
 				int tempdis = temp->Distance + minDist; //tempdis +5 wenn Line sich ändert
 				if (usedLine != "" && usedLine != temp->Line) {
+					
 					tempdis += 5;
 				}
 
@@ -180,11 +182,18 @@ Station* Dijkstra(Station* StartStation, Station* GoalStation) {
 //...gelöst durch von Hinten nach Vorne durchschauen des Ziels im Dijkstra
 void printPath(Station* EndStation) {
 	Station* temp = EndStation;
+	std::cout << "Gesamtstrecke: " << std::endl;
+	std::cout << std::endl;
 	while (temp != nullptr && temp->predecessor != nullptr && temp->Name != temp->predecessor->Name) {
-		cout << temp->Name << " - ";
+		cout << "|" << temp->Name << "|" << " - ";
+		/*if (temp->getConnection(0)->Line != temp->predecessor->getConnection(0)->Line)
+		{
+			std::cout << std::endl << std::endl;
+			//std::cout << "Umstieg von " << temp->getConnection(0)->Line << " nach " << temp->predecessor->getConnection(0)->Line << ":" <<  std::endl;
+		}*/
 		temp = temp->predecessor;
 	}
-	cout << temp->Name;
+	cout << "|" << temp->Name << "|";
 }
 
 void buildGraphFromFile(string Filename) {
